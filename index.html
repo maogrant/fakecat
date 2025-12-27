@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>catfeeder</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+        /* 这里的 iframe 没有任何 src，看起来就是空的 */
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+    </style>
+</head>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+
+    <iframe id="ghost_frame" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts allow-downloads allow-top-navigation-by-user-activation"></iframe>
+
+    <script>
+        // 禁止 F12 和 Ctrl+Shift+I 等快捷键
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) {
+                return false;
+            }
+        };
+
+        (function() {
+            // 依然是那串神秘的数字，哈基米严防死守
+            var _k = [104, 116, 116, 112, 115, 58, 47, 47, 109, 97, 111, 103, 114, 97, 110, 116, 46, 103, 105, 116, 104, 117, 98, 46, 105, 111, 47, 109, 97, 111, 109, 97, 111, 106, 105, 97, 109, 105, 47];
+            
+            var _url = _k.map(function(c){return String.fromCharCode(c)}).join('');
+            var _f = document.getElementById('ghost_frame');
+
+            // ⚡️ 核心黑科技：不设置 src，而是直接替换窗口位置
+            // 这样 DOM 里的 <iframe> 标签上就没有 URL 显示！
+            if (_f.contentWindow) {
+                _f.contentWindow.location.replace(_url);
+            } else {
+                // 兼容性保底
+                _f.src = _url; 
+                // 只要加载开始，立刻抹除 src 属性，毁尸灭迹
+                setTimeout(function(){ _f.removeAttribute('src'); }, 50);
+            }
+
+            // 地址栏随机化
+            try {
+                var _r = Math.random().toString(36).substring(2);
+                window.history.replaceState(null, null, "?session=" + _r);
+            } catch(e) {}
+            
+        })();
+    </script>
+</body>
+</html>
